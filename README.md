@@ -6,12 +6,16 @@ $ go install githube.com/virgilio/travel-route/cmd/travel-route
 $ $GOPATH/bin/travel-route <path-to-input-file>
 
 $ # using CURL to test the API:
-$ curl -H "Content-Type: application/json"  "localhost:8080/bestRoute" --data '{"from":"GRU","to":"CDG"}'
-$ curl -X POST -H "Content-Type: application/json"  "localhost:8080/addRoute" --data '{"From":"GRU","To":"SDU","Cost":10}'
-$ curl -X POST -H "Content-Type: application/json"  "localhost:8080/addRoute" --data '{"From":"SDU","To":"CDG","Cost":20}'
-$ curl -X GET -H "Content-Type: application/json"  "localhost:8080/addRoute" --data '{"From":"SDU","To":"ORL","Cost":20}' # Method not allowed
-$ curl -H "Content-Type: application/json"  "localhost:8080/bestRoute" --data '{"from":"GRU","to":"CDG"}'
-
+$ curl -H "Content-Type: application/json" "localhost:8080/bestRoute" \
+        --data '{"from":"GRU","to":"CDG"}'
+$ curl -X POST -H "Content-Type: application/json" "localhost:8080/addRoute" \
+        --data '{"From":"GRU","To":"SDU","Cost":10}'
+$ curl -X POST -H "Content-Type: application/json" "localhost:8080/addRoute" \
+        --data '{"From":"SDU","To":"CDG","Cost":20}'
+$ curl -X GET -H "Content-Type: application/json" "localhost:8080/addRoute" \
+        --data '{"From":"SDU","To":"ORL","Cost":20}' # Method not allowed
+$ curl -H "Content-Type: application/json" "localhost:8080/bestRoute" \
+        --data '{"from":"GRU","to":"CDG"}'
 ```
 ### Estrutura dos arquivos/pacotes:
 
