@@ -2,7 +2,7 @@
 
 ```shell
 $ go get github.com/virgilio/travel-route
-$ go install githube.com/virgilio/travel-route/cmd/travel-route
+$ go install github.com/virgilio/travel-route/cmd/travel-route
 $ $GOPATH/bin/travel-route <path-to-input-file>
 
 $ # using CURL to test the API:
@@ -19,10 +19,10 @@ $ curl -H "Content-Type: application/json" "localhost:8080/bestRoute" \
 ```
 ### Estrutura dos arquivos/pacotes:
 
-  * `server` que contem a implementação da REST API, no caso, a applicação e um middleware que insere as informações de storage no requests
-  * `shortestpath` que contem as estruturas de dados para calculo de caminhos minimos
-  * `storage` que trata exclusivamente dos dados (há um sample input file nesse pacote)
-  * `test` contem os testes de unidade
+  * `server` contém a implementação da REST API, no caso, a applicação e um middleware que insere as informações de storage no requests
+  * `shortestpath` contém as estruturas de dados para calculo de caminhos minimos
+  * `storage` trata exclusivamente dos dados (há um sample input file nesse pacote)
+  * `test` contém os testes de unidade
 
 ### Explique as decisões de design adotadas para a solução:
 
@@ -36,7 +36,7 @@ Com o ponto de partida, calculamos o caminho mais curto para todos os vértices,
 
 A construção do grafo e a função de menor caminho tem como receivers a lista de voos (carregada via modulo storage) e um vertive qualquer de partida respectivamente
 
-### Descreva sua APÌ Rest de forma simplificada:
+### Descreva sua API Rest de forma simplificada:
 
 * POST /bestRoute `{"from": <str>, "to": <str>}`:
   * success: `{"Cost":<int>,"Cities": <[]str>}`
