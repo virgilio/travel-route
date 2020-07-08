@@ -1,67 +1,42 @@
-# Rota de Viagem #
-
-Um turista deseja viajar pelo mundo pagando o menor preço possível independentemente do número de conexões necessárias.
-Vamos construir um programa que facilite ao nosso turista, escolher a melhor rota para sua viagem.
-
-Para isso precisamos inserir as rotas através de um arquivo de entrada.
-
-## Input Example ##
-```csv
-GRU,BRC,10
-BRC,SCL,5
-GRU,CDG,75
-GRU,SCL,20
-GRU,ORL,56
-ORL,CDG,5
-SCL,ORL,20
-```
-
-## Explicando ## 
-Caso desejemos viajar de **GRU** para **CDG** existem as seguintes rotas:
-
-1. GRU - BRC - SCL - ORL - CDG ao custo de **$40**
-2. GRU - ORL - CGD ao custo de **$64**
-3. GRU - CDG ao custo de **$75**
-4. GRU - SCL - ORL - CDG ao custo de **$48**
-5. GRU - BRC - CDG ao custo de **$45**
-
-O melhor preço é da rota **4** logo, o output da consulta deve ser **CDG - SCL - ORL - CDG**.
-
-### Execução do programa ###
-A inicializacao do teste se dará por linha de comando onde o primeiro argumento é o arquivo com a lista de rotas inicial.
+### Como executar a aplicação:
 
 ```shell
-$ mysolution input-routes.csv
+$ go get github.com/virgilio/travel-route
+$ go install githube.com/virgilio/travel-route/cmd/travel-route
+$ $GOPATH/bin/travel-route <path-to-input-file>
+
+$ # using CURL to test the API:
+$ curl -H "Content-Type: application/json"  "localhost:8080/bestRoute" --data '{"from":"GRU","to":"CDG"}'
+$ curl -X POST -H "Content-Type: application/json"  "localhost:8080/addRoute" --data '{"From":"GRU","To":"SDU","Cost":10}'
+$ curl -X POST -H "Content-Type: application/json"  "localhost:8080/addRoute" --data '{"From":"SDU","To":"CDG","Cost":20}'
+$ curl -X GET -H "Content-Type: application/json"  "localhost:8080/addRoute" --data '{"From":"SDU","To":"ORL","Cost":20}' # Method not allowed
+$ curl -H "Content-Type: application/json"  "localhost:8080/bestRoute" --data '{"from":"GRU","to":"CDG"}'
+
 ```
+### Estrutura dos arquivos/pacotes:
 
-Duas interfaces de consulta devem ser implementadas:
-- Interface de console deverá receber um input com a rota no formato "DE-PARA" e imprimir a melhor rota e seu respectivo valor.
-  Exemplo:
-  ```shell
-  please enter the route: GRU-CGD
-  best route: GRU - BRC - SCL - ORL - CDG > $40
-  please enter the route: BRC-CDG
-  best route: BRC - ORL > $30
-  ```
+  * `server` que contem a implementação da REST API, no caso, a applicação e um middleware que insere as informações de storage no requests
+  * `shortestpath` que contem as estruturas de dados para calculo de caminhos minimos
+  * `storage` que trata exclusivamente dos dados (há um sample input file nesse pacote)
+  * `test` contem os testes de unidade
 
-- Interface Rest
-    A interface Rest deverá suportar:
-    - Registro de novas rotas. Essas novas rotas devem ser persistidas no arquivo csv utilizado como input(input-routes.csv),
-    - Consulta de melhor rota entre dois pontos.
+### Explique as decisões de design adotadas para a solução:
 
-Também será necessária a implementação de 2 endpoints Rest, um para registro de rotas e outro para consula de melhor rota.
+A aplicação possui um comando apenas que inicializa o serviço http e a linha de comando
 
-## Recomendações ##
-Para uma melhor fluides da nossa conversa, atente-se aos seguintes pontos:
+Uma vez inicializado, ambas interfaces aguardam por requisições. Uma vez feita uma requisição, é lido o arquivo de voos disponiveis e montado o grafo
 
-* Envie apenas o código fonte,
-* Estruture sua aplicação seguindo as boas práticas de desenvolvimento,
-* Evite o uso de frameworks ou bibliotecas externas à linguagem. Utilize apenas o que for necessário para a exposição do serviço,
-* Implemente testes unitários seguindo as boas praticas de mercado,
-* Documentação
-  Em um arquivo Texto ou Markdown descreva:
-  * Como executar a aplicação,
-  * Estrutura dos arquivos/pacotes,
-  * Explique as decisões de design adotadas para a solução,
-  * Descreva sua APÌ Rest de forma simplificada.
+O vértice do grafo possui o nome da cidade e uma lista de partidas possíveis daquele aeroporto. Além disso, essa estrutura carrega seu custo mínimo ao ponto de partida e o caminho até lá (inicializados com -1 e vazio respectivamente). O Grafo é representado por um mapa de vértices
 
+Com o ponto de partida, calculamos o caminho mais curto para todos os vértices, incluindo o destino usando algorítmo de Dijkstra de caminhos mínimos e retornamos, no final, o custo mínimo e o caminho da cidade de destino.
+
+A construção do grafo e a função de menor caminho tem como receivers a lista de voos (carregada via modulo storage) e um vertive qualquer de partida respectivamente
+
+### Descreva sua APÌ Rest de forma simplificada:
+
+* POST /bestRoute `{"from": <str>, "to": <str>}`:
+  * success: `{"Cost":<int>,"Cities": <[]str>}`
+  * error: `{"error":<str>,"cause":<str>,"time":<str>}`
+* POST /addRoute `{"from": <str>, "to": <str>, "cost": <int>}`
+  * success: `{"From":<str>,"To":<str>,"Cost":<int>}`
+  * error: `{"error":<str>,"cause":<str>,"time":<str>}`
