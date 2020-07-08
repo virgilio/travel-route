@@ -34,7 +34,7 @@ func main() {
 	for scanner.Scan() {
 		route := strings.Split(scanner.Text(), "-")
 		if len(route) != 2 {
-			fmt.Println("Invalid Route, ")
+			fmt.Println("Invalid Route, it must be (FROM-TO)")
 		} else {
 			flights, loadErr := storage.LoadFlights(routesFile)
 			if loadErr != nil {

@@ -3,7 +3,6 @@ package storage
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
 	"strconv"
 
@@ -12,7 +11,6 @@ import (
 
 // AppendRoute function appends a route line to csv file
 func AppendRoute(routesFileName string, flight shortestpath.Flight) error {
-	fmt.Println(routesFileName)
 	routesFile, fileErr := os.OpenFile(routesFileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if fileErr != nil {
 		return fileErr
@@ -24,7 +22,6 @@ func AppendRoute(routesFileName string, flight shortestpath.Flight) error {
 	if writeErr != nil {
 		return writeErr
 	}
-	fmt.Println(flight.CSVRecord())
 
 	return routesFile.Close()
 }
